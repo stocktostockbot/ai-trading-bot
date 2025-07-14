@@ -1,8 +1,8 @@
-pandas
-ta
-pyotp
-flask
+Flask
 schedule
+pyotp
+requests
+ta
+pandas
 xgboost
 scikit-learn
-requests
