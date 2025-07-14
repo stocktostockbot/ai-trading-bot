@@ -52,6 +52,10 @@
       </tr>
       {% endfor %}
     </table>
+    <p><strong>✅ Correct Signals:</strong> {{ summary.correct }}</p>
+    <p><strong>❌ Incorrect Signals:</strong> {{ summary.wrong }}</p>
+    <p><strong>📈 Accuracy:</strong> {{ summary.accuracy }}%</p>
+
   </div>
   <div class="card">
   <h2>📄 Download Signal Logs</h2>
