@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, session
 import os
 from ai_signals import generate_signal
 from paper_trading import get_summary
+from flask import send_file
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecret")
@@ -22,6 +23,15 @@ def dashboard():
     signal = generate_signal()
     summary = get_summary()
     return render_template('dashboard.html', signal=signal, summary=summary)
+
+
+
+@app.route('/download')
+def download_log():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    return send_file("signals_log.csv", as_attachment=True)
+
 
 @app.route('/logout')
 def logout():
