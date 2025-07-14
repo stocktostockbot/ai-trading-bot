@@ -1,8 +1,8 @@
 Flask
-schedule
-pyotp
-requests
 ta
 pandas
+schedule
+requests
 xgboost
 scikit-learn
+pyotp
