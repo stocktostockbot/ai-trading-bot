@@ -1,8 +1,8 @@
-Flask
-ta
-pandas
+Flask==3.0.0
 schedule
-requests
-xgboost
-scikit-learn
 pyotp
+requests
+scikit-learn
+pandas
+python-dateutil
+ta
