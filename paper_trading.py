@@ -1,6 +1,9 @@
 import json
 import os
 from datetime import datetime
+from telegram_alerts import send_telegram_alert
+from datetime import datetime
+
 
 DATA_FILE = "paper_trades.json"
 START_BALANCE = 100000  # ₹1 Lakh initial
@@ -52,3 +55,37 @@ def get_summary():
         "total_pnl": total_pnl,
         "trades": data["trades"]
     }
+
+def record_trade(signal, price):
+    data = load_data()
+    quantity = 15  # lot size
+    pnl = 0
+    now = datetime.now().strftime("%H:%M:%S")
+
+    if signal == "BUY":
+        entry = {
+            "type": "BUY",
+            "price": price,
+            "qty": quantity,
+            "datetime": str(datetime.now())
+        }
+        data["trades"].append(entry)
+        send_telegram_alert(
+            f"✅ Paper Trade Executed\nType: BUY\nQty: {quantity}\nPrice: {price}\nTime: {now}"
+        )
+
+    elif signal == "SELL":
+        for t in reversed(data["trades"]):
+            if t["type"] == "BUY" and "exit_price" not in t:
+                pnl = (price - t["price"]) * quantity
+                t["exit_price"] = price
+                t["exit_datetime"] = str(datetime.now())
+                t["pnl"] = pnl
+                data["balance"] += pnl
+                send_telegram_alert(
+                    f"✅ Paper Trade Closed\nType: SELL\nQty: {quantity}\nSell Price: {price}\nP&L: ₹{round(pnl, 2)}\nTime: {now}"
+                )
+                break
+
+    save_data(data)
+
