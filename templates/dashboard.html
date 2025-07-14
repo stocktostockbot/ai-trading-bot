@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Signal Dashboard</title>
-  <meta http-equiv="refresh" content="30">
-</head>
-<body>
-  <h2>📊 Live Signal Dashboard</h2>
-  <p><strong>Signal:</strong> {{ signal }}</p>
+<h3>🧾 Paper Trading Summary</h3>
+<p><strong>Balance:</strong> ₹{{ summary.balance }}</p>
+<p><strong>Total Trades:</strong> {{ summary.total_trades }}</p>
+<p><strong>Total P&L:</strong> ₹{{ summary.total_pnl }}</p>
 
-  <!-- TradingView Widget -->
-  <iframe src="https://www.tradingview.com/embed-widget/mini-symbol-overview/?symbol=NSE:NIFTY" width="100%" height="300" frameborder="0"></iframe>
-
-  <br>
-  <a href="/logout">Logout</a>
-</body>
-</html>
+<table border="1" cellpadding="5" style="margin: auto;">
+  <tr><th>Type</th><th>Price</th><th>Qty</th><th>P&L</th><th>Date</th></tr>
+  {% for trade in summary.trades[-5:] %}
+    <tr>
+      <td>{{ trade.type }}</td>
+      <td>{{ trade.price }}</td>
+      <td>{{ trade.qty }}</td>
+      <td>{{ trade.pnl if trade.pnl else '-' }}</td>
+      <td>{{ trade.datetime }}</td>
+    </tr>
+  {% endfor %}
+</table>
