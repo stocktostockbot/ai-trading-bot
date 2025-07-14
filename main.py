@@ -31,9 +31,11 @@ if __name__ == "__main__":
 def run_bot():
     signal = generate_signal()
     if signal:
+        log_signal(signal)
         send_telegram_alert(f"📈 Trade Signal: {signal}")
         if LIVE_TRADING:
             angel.place_order(signal)
         else:
-            price = angel.get_ltp("NSE:NIFTY")  # or BANKNIFTY
+            price = angel.get_ltp("NSE:NIFTY")
             record_trade(signal, price)
+
