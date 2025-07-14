@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>AI Trading Bot Dashboard</title>
+  <meta charset="UTF-8">
+  <title>📈 AI Trading Signal Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>📈 AI Trading Bot Dashboard</h1>
-    <p>Latest Signal: <strong>{{ signal }}</strong></p>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center">
+  <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full">
+    <h1 class="text-3xl font-bold text-center mb-4">AI Trading Bot</h1>
+    <div class="text-center">
+      <p class="text-lg text-gray-600">Latest Signal:</p>
+      <p class="text-4xl font-extrabold text-green-600 my-4">{{ signal }}</p>
+    </div>
+    <div class="text-center mt-6">
+      <button onclick="window.location.reload()" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700">
+        🔄 Refresh Signal
+      </button>
+    </div>
+    <p class="text-center text-sm text-gray-400 mt-6">Updated at: {{ now }}</p>
+  </div>
 </body>
 </html>
