@@ -4,6 +4,8 @@ from ai_signals import generate_signal
 from telegram_alerts import send_telegram_alert
 import schedule
 import time
+from paper_trading import record_trade
+
 
 angel = AngelSession(API_KEY, CLIENT_CODE, PASSWORD, TOTP_SECRET)
 angel.login()
