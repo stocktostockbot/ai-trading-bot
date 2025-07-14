@@ -3,7 +3,6 @@ import os
 from ai_signals import generate_signal
 from paper_trading import get_summary
 
-
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecret")
 
