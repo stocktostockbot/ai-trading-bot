@@ -1,0 +1,9 @@
+
+pandas
+ta
+pyotp
+flask
+schedule
+xgboost
+scikit-learn
+requests
