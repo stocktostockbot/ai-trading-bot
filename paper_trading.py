@@ -48,13 +48,30 @@ def record_trade(signal, price):
 
 def get_summary():
     data = load_data()
-    total_pnl = sum(t.get("pnl", 0) for t in data["trades"])
+    trades = data["trades"]
+    total_trades = len(trades)
+    correct = 0
+    wrong = 0
+
+    for t in trades:
+        if "pnl" in t:
+            if t["pnl"] > 0:
+                correct += 1
+            elif t["pnl"] < 0:
+                wrong += 1
+
+    accuracy = (correct / (correct + wrong) * 100) if (correct + wrong) > 0 else 0
+
     return {
-        "balance": data["balance"],
-        "total_trades": len(data["trades"]),
-        "total_pnl": total_pnl,
-        "trades": data["trades"]
+        "balance": round(data["balance"], 2),
+        "total_trades": total_trades,
+        "total_pnl": round(sum(t.get("pnl", 0) for t in trades), 2),
+        "correct": correct,
+        "wrong": wrong,
+        "accuracy": round(accuracy, 2),
+        "trades": trades
     }
+
 
 def record_trade(signal, price):
     data = load_data()
