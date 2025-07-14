@@ -2,30 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>📈 AI Trading Dashboard</title>
+  <title>AI Trading Bot</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <meta http-equiv="refresh" content="30">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-6">
-  <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-xl">
-    <h1 class="text-3xl font-bold text-center mb-4">📊 AI Trading Bot</h1>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-3xl font-bold">📈 AI Trading Dashboard</h1>
+      <a href="/logout" class="text-sm text-blue-600 hover:underline">Logout</a>
+    </div>
 
-    <div class="text-center text-gray-700">
-      <p class="text-lg">Latest Signal:</p>
-      <p class="text-4xl font-bold text-green-600 my-2">{{ signal }}</p>
+    <div class="mb-4">
+      <p class="text-lg">Latest Signal: <strong class="text-green-600 text-2xl">{{ signal }}</strong></p>
       <p class="text-sm text-gray-500">Updated at: {{ now }}</p>
       <p class="text-sm text-gray-500">Telegram Status: {{ telegram_status }}</p>
     </div>
 
-    <div class="text-center mt-6">
-      <button onclick="window.location.reload()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow">
-        🔄 Refresh Signal
-      </button>
-    </div>
-
-    <hr class="my-6">
-
-    <div>
-      <h2 class="text-xl font-semibold mb-2">📜 Recent Signals</h2>
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold mb-2">📜 Signal History</h2>
       <ul class="space-y-2">
         {% for item in history %}
           <li class="bg-gray-50 p-3 rounded-md shadow flex justify-between">
@@ -37,6 +32,16 @@
           </li>
         {% endfor %}
       </ul>
+    </div>
+
+    <h2 class="text-xl font-bold mb-2">📊 Live Chart (Nifty & BankNifty)</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="border rounded overflow-hidden shadow">
+        <iframe src="https://www.tradingview.com/embed-widget/symbol-overview/?symbol=NSE:NIFTY" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="border rounded overflow-hidden shadow">
+        <iframe src="https://www.tradingview.com/embed-widget/symbol-overview/?symbol=NSE:BANKNIFTY" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
+      </div>
     </div>
   </div>
 </body>
