@@ -25,3 +25,13 @@ if __name__ == "__main__":
     while True:
         schedule.run_pending()
         time.sleep(5)
+
+def run_bot():
+    signal = generate_signal()
+    if signal:
+        send_telegram_alert(f"📈 Trade Signal: {signal}")
+        if LIVE_TRADING:
+            angel.place_order(signal)
+        else:
+            price = angel.get_ltp("NSE:NIFTY")  # or BANKNIFTY
+            record_trade(signal, price)
