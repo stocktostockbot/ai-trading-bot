@@ -21,7 +21,8 @@ def dashboard():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     signal = generate_signal()
-    return render_template('dashboard.html', signal=signal)
+    summary = get_summary()
+    return render_template('dashboard.html', signal=signal, summary=summary)
 
 @app.route('/logout')
 def logout():
