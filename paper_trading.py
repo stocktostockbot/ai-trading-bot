@@ -2,47 +2,69 @@ import json
 import os
 from datetime import datetime
 from telegram_alerts import send_telegram_alert
-from datetime import datetime
-
 
 DATA_FILE = "paper_trades.json"
-START_BALANCE = 100000  # ₹1 Lakh initial
 
 def load_data():
     if not os.path.exists(DATA_FILE):
-        return {"balance": START_BALANCE, "trades": []}
-    with open(DATA_FILE, "r") as f:
-        return json.load(f)
+        return {"balance": 100000, "trades": []}
+    with open(DATA_FILE, "r") as file:
+        return json.load(file)
 
 def save_data(data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    with open(DATA_FILE, "w") as file:
+        json.dump(data, file, indent=2)
 
 def record_trade(signal, price):
     data = load_data()
+    trades = data["trades"]
+    balance = data["balance"]
+    now = datetime.now().strftime("%H:%M:%S")
 
-    quantity = 15  # lot size, can be dynamic later
-    pnl = 0
+    # Find open trade
+    open_trade = None
+    for t in reversed(trades):
+        if "exit_price" not in t:
+            open_trade = t
+            break
 
-    if signal == "BUY":
-        entry = {
-            "type": "BUY",
-            "price": price,
-            "qty": quantity,
-            "datetime": str(datetime.now())
-        }
-        data["trades"].append(entry)
+    if open_trade:
+        # Same direction → do nothing
+        if open_trade["type"] == signal:
+            return
+        else:
+            # Opposite direction → close current
+            exit_price = price
+            entry_price = open_trade["price"]
+            qty = open_trade["qty"]
+            pnl = (exit_price - entry_price) * qty if open_trade["type"] == "BUY" else (entry_price - exit_price) * qty
 
-    elif signal == "SELL":
-        # Assume selling the last BUY
-        for t in reversed(data["trades"]):
-            if t["type"] == "BUY" and "exit_price" not in t:
-                pnl = (price - t["price"]) * quantity
-                t["exit_price"] = price
-                t["exit_datetime"] = str(datetime.now())
-                t["pnl"] = pnl
-                data["balance"] += pnl
-                break
+            open_trade["exit_price"] = exit_price
+            open_trade["exit_datetime"] = str(datetime.now())
+            open_trade["pnl"] = round(pnl, 2)
+            data["balance"] += pnl
+
+            send_telegram_alert(
+                f"💼 Trade Closed\nType: {open_trade['type']}\nExit Price: {exit_price}\nQty: {qty}\nP&L: ₹{round(pnl, 2)}\nTime: {now}"
+            )
+
+    # New trade entry
+    qty = int(balance // price)
+    if qty == 0:
+        send_telegram_alert("❌ Not enough balance to take a new position.")
+        save_data(data)
+        return
+
+    new_trade = {
+        "type": signal,
+        "price": price,
+        "qty": qty,
+        "datetime": str(datetime.now())
+    }
+    trades.append(new_trade)
+    send_telegram_alert(
+        f"✅ New Trade Executed\nType: {signal}\nEntry Price: {price}\nQty: {qty}\nTime: {now}"
+    )
 
     save_data(data)
 
@@ -71,38 +93,3 @@ def get_summary():
         "accuracy": round(accuracy, 2),
         "trades": trades
     }
-
-
-def record_trade(signal, price):
-    data = load_data()
-    quantity = 15  # lot size
-    pnl = 0
-    now = datetime.now().strftime("%H:%M:%S")
-
-    if signal == "BUY":
-        entry = {
-            "type": "BUY",
-            "price": price,
-            "qty": quantity,
-            "datetime": str(datetime.now())
-        }
-        data["trades"].append(entry)
-        send_telegram_alert(
-            f"✅ Paper Trade Executed\nType: BUY\nQty: {quantity}\nPrice: {price}\nTime: {now}"
-        )
-
-    elif signal == "SELL":
-        for t in reversed(data["trades"]):
-            if t["type"] == "BUY" and "exit_price" not in t:
-                pnl = (price - t["price"]) * quantity
-                t["exit_price"] = price
-                t["exit_datetime"] = str(datetime.now())
-                t["pnl"] = pnl
-                data["balance"] += pnl
-                send_telegram_alert(
-                    f"✅ Paper Trade Closed\nType: SELL\nQty: {quantity}\nSell Price: {price}\nP&L: ₹{round(pnl, 2)}\nTime: {now}"
-                )
-                break
-
-    save_data(data)
-
