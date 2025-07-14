@@ -1,17 +1,53 @@
-<h3>🧾 Paper Trading Summary</h3>
-<p><strong>Balance:</strong> ₹{{ summary.balance }}</p>
-<p><strong>Total Trades:</strong> {{ summary.total_trades }}</p>
-<p><strong>Total P&L:</strong> ₹{{ summary.total_pnl }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📈 AI Trading Dashboard</title>
+  <meta http-equiv="refresh" content="30">
+  <style>
+    body { font-family: Arial; background: #f8f9fa; padding: 20px; text-align: center; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; margin-bottom: 20px; width: 90%; max-width: 800px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #eee; }
+    iframe { border-radius: 8px; margin-top: 20px; width: 100%; height: 400px; }
+    .logout { margin-top: 20px; display: inline-block; background: #dc3545; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; }
+  </style>
+</head>
+<body>
 
-<table border="1" cellpadding="5" style="margin: auto;">
-  <tr><th>Type</th><th>Price</th><th>Qty</th><th>P&L</th><th>Date</th></tr>
-  {% for trade in summary.trades[-5:] %}
-    <tr>
-      <td>{{ trade.type }}</td>
-      <td>{{ trade.price }}</td>
-      <td>{{ trade.qty }}</td>
-      <td>{{ trade.pnl if trade.pnl else '-' }}</td>
-      <td>{{ trade.datetime }}</td>
-    </tr>
-  {% endfor %}
-</table>
+  <div class="card">
+    <h2>🤖 Live Signal</h2>
+    <p><strong>Latest Signal:</strong> {{ signal if signal else '🔍 No active signal' }}</p>
+  </div>
+
+  <div class="card">
+    <h2>📊 TradingView Chart - NIFTY</h2>
+    <iframe src="https://in.tradingview.com/widgetembed/?symbol=NSE:NIFTY&interval=1&theme=light&style=1&locale=in&timezone=Asia/Kolkata" frameborder="0"></iframe>
+  </div>
+
+  <div class="card">
+    <h2>🧾 Paper Trading Summary</h2>
+    <p><strong>Balance:</strong> ₹{{ summary.balance }}</p>
+    <p><strong>Total Trades:</strong> {{ summary.total_trades }}</p>
+    <p><strong>Total P&L:</strong> ₹{{ summary.total_pnl }}</p>
+
+    <table>
+      <tr><th>Type</th><th>Entry</th><th>Exit</th><th>Qty</th><th>P&L</th><th>Date</th></tr>
+      {% for t in summary.trades[-5:] %}
+      <tr>
+        <td>{{ t.type }}</td>
+        <td>{{ t.price }}</td>
+        <td>{{ t.exit_price if t.exit_price else '-' }}</td>
+        <td>{{ t.qty }}</td>
+        <td>{{ t.pnl if t.pnl else '-' }}</td>
+        <td>{{ t.datetime }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <a href="/logout" class="logout">🔓 Logout</a>
+
+</body>
+</html>
