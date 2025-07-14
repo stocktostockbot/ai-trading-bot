@@ -15,3 +15,12 @@ class AngelSession:
 
     def place_order(self, signal):
         print(f"✅ Placing order: {signal}")
+
+    def get_ltp(self, symbol):
+    response = self.smart_api.ltpData(
+        exchange="NSE",
+        tradingsymbol=symbol,
+        symboltoken="99926009"  # You may need to fetch actual token
+    )
+    return float(response['data']['ltp'])
+
